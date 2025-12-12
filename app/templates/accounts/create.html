@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - Bank Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-plus-circle"></i> Create New Account</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('accounts.create_account') }}">
+                    <div class="mb-3">
+                        <label for="account_type" class="form-label">Account Type</label>
+                        <select class="form-select" id="account_type" name="account_type" required>
+                            <option value="">Select account type...</option>
+                            <option value="savings">Savings Account</option>
+                            <option value="checking">Checking Account</option>
+                        </select>
+                        <div class="form-text">
+                            <strong>Savings:</strong> Earn interest on your deposits<br>
+                            <strong>Checking:</strong> For everyday transactions
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="initial_deposit" class="form-label">Initial Deposit (Optional)</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="initial_deposit" 
+                                   name="initial_deposit" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="form-text">Minimum: $0.00</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Create Account
+                        </button>
+                        <a href="{{ url_for('accounts.list_accounts') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

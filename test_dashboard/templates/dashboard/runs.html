@@ -1,0 +1,146 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Test Runs - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h2>
+        <i class="bi bi-play-circle"></i> Test Runs
+    </h2>
+    <p>Complete history of all test executions</p>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 15%;">Date/Time</th>
+                        <th style="width: 12%;">Total</th>
+                        <th style="width: 12%;">Passed</th>
+                        <th style="width: 12%;">Failed</th>
+                        <th style="width: 14%;">Pass Rate</th>
+                        <th style="width: 12%;">Coverage</th>
+                        <th style="width: 10%;">Duration</th>
+                        <th style="width: 10%;">Status</th>
+                        <th style="width: 8%;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for run in runs.items %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500; color: #f1f5f9;">{{ run.start_time.strftime('%Y-%m-%d') }}</div>
+                            <small style="color: var(--text-muted);">{{ run.start_time.strftime('%H:%M:%S') }}</small>
+                        </td>
+                        <td>
+                            <span style="font-weight: 600; font-size: 1.1rem; color: #f1f5f9;">{{ run.total_tests }}</span>
+                        </td>
+                        <td>
+                            <span style="color: #10b981; font-weight: 600;">{{ run.passed }}</span>
+                        </td>
+                        <td>
+                            <span style="color: #ef4444; font-weight: 600;">{{ run.failed }}</span>
+                        </td>
+                        <td>
+                            <div class="progress" style="width: 100%; height: 22px; background: rgba(71, 85, 105, 0.3);">
+                                <div class="progress-bar pass-rate-bar" data-rate="{{ run.pass_rate }}" style="width: '{{ run.pass_rate }}%'; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #f1f5f9;">
+                                    {{ run.pass_rate }}%
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 500; color: #f1f5f9;">{{ "%.1f"|format(run.coverage) }}%</div>
+                        </td>
+                        <td>
+                            <span style="color: var(--text-secondary);">{{ "%.2f"|format(run.duration) }}s</span>
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ 'passed' if run.failed == 0 else 'failed' }}">
+                                {{ 'PASSED' if run.failed == 0 else 'FAILED' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('run_details', run_id=run.id) }}" class="btn btn-sm btn-outline-primary" title="View Details">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center py-5">
+                            <i class="bi bi-inbox" style="font-size: 3.5rem; opacity: 0.5;"></i>
+                            <p class="mt-3" style="color: var(--text-muted);">No test runs recorded yet</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if runs.pages > 1 %}
+        <div style="border-top: 1px solid var(--border-color); padding: 1.5rem;">
+            <nav>
+                <ul class="pagination justify-content-center mb-0">
+                    {% if runs.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('test_runs', page=runs.prev_num) }}">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+                    </li>
+                    {% endif %}
+                    
+                    {% for page in runs.iter_pages() %}
+                        {% if page %}
+                        <li class="page-item {% if page == runs.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('test_runs', page=page) }}">{{ page }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if runs.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('test_runs', page=runs.next_num) }}">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <p class="text-center text-muted" style="margin-top: 1rem; margin-bottom: 0;">
+                Page <strong>{{ runs.page }}</strong> of <strong>{{ runs.pages }}</strong>
+            </p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Apply dynamic colors to pass rate bars
+    document.querySelectorAll('.pass-rate-bar').forEach(bar => {
+        const rate = parseFloat(bar.getAttribute('data-rate'));
+        if (rate >= 80) {
+            bar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+        } else if (rate >= 50) {
+            bar.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)';
+        } else {
+            bar.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+        }
+    });
+</script>
+{% endblock %}

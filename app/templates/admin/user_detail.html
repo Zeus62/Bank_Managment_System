@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}User Details - Admin{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin.list_users') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Users
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-person"></i> User Information</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td><strong>ID:</strong></td>
+                        <td>{{ user.id }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Username:</strong></td>
+                        <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email:</strong></td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Role:</strong></td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if user.role == 'admin' else 'primary' if user.role == 'teller' else 'secondary' }}">
+                                {{ user.role | capitalize }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Status:</strong></td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if user.is_active else 'danger' }}">
+                                {{ 'Active' if user.is_active else 'Inactive' }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Created:</strong></td>
+                        <td>{{ user.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                    </tr>
+                </table>
+                
+                {% if user.id != current_user.id %}
+                <hr>
+                
+                <!-- Change Role -->
+                <form method="POST" action="{{ url_for('admin.change_user_role', user_id=user.id) }}">
+                    <div class="mb-3">
+                        <label class="form-label">Change Role</label>
+                        <select name="role" class="form-select">
+                            <option value="customer" {% if user.role == 'customer' %}selected{% endif %}>Customer</option>
+                            <option value="teller" {% if user.role == 'teller' %}selected{% endif %}>Teller</option>
+                            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-save"></i> Update Role
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <!-- Toggle Status -->
+                <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}">
+                    <button type="submit" 
+                            class="btn btn-{{ 'danger' if user.is_active else 'success' }} w-100"
+                            onclick="return confirm('Are you sure?')">
+                        <i class="bi bi-{{ 'x-circle' if user.is_active else 'check-circle' }}"></i>
+                        {{ 'Deactivate' if user.is_active else 'Activate' }} User
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-wallet2"></i> User Accounts</h5>
+            </div>
+            <div class="card-body">
+                {% if accounts %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Type</th>
+                            <th>Balance</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in accounts %}
+                        <tr>
+                            <td>{{ account.account_number }}</td>
+                            <td>{{ account.account_type | capitalize }}</td>
+                            <td>${{ "%.2f"|format(account.balance) }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if account.status == 'active' else 'warning' if account.status == 'frozen' else 'secondary' }}">
+                                    {{ account.status | capitalize }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center">No accounts found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

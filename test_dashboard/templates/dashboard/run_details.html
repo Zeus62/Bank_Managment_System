@@ -1,0 +1,234 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Run Details - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Back Button -->
+<div class="mb-4">
+    <a href="{{ url_for('test_runs') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Runs
+    </a>
+</div>
+
+<!-- Run Details Header -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 style="margin: 0;"><i class="bi bi-info-circle"></i> Test Run Details</h4>
+                </div>
+                <span class="status-badge status-{{ 'passed' if run.failed == 0 else 'failed' }}" style="font-size: 0.95rem;">
+                    {{ 'PASSED' if run.failed == 0 else 'FAILED' }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div>
+                            <small style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #f1f5f9;">Run ID</small>
+                            <p style="margin: 0.5rem 0 0 0; color: #f1f5f9;"><code style="font-size: 0.9rem; color: #f1f5f9;">{{ run.run_id[:30] }}</code></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div>
+                            <small style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #f1f5f9;">Started</small>
+                            <p style="margin: 0.5rem 0 0 0; color: #f1f5f9;">{{ run.start_time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div>
+                            <small style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #f1f5f9;">Duration</small>
+                            <p style="margin: 0.5rem 0 0 0; color: #f1f5f9;">{{ "%.2f"|format(run.duration) }}s</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div>
+                            <small style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: #f1f5f9;">Pass Rate</small>
+                            <p style="margin: 0.5rem 0 0 0; font-size: 1.2rem; font-weight: 600; color: #f1f5f9;">{{ run.pass_rate }}%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-3 text-center">
+                        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">{{ run.total_tests }}</div>
+                            <small style="color: #f1f5f9;">Total Tests</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #10b981;">{{ run.passed }}</div>
+                            <small style="color: #f1f5f9;">Passed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)); border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">{{ run.failed }}</div>
+                            <small style="color: #f1f5f9;">Failed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div style="padding: 1rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05)); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">{{ run.skipped }}</div>
+                            <small style="color: #f1f5f9;">Skipped</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                {% set pass_pct = (run.passed / run.total_tests * 100) if run.total_tests > 0 else 0 %}
+                {% set fail_pct = (run.failed / run.total_tests * 100) if run.total_tests > 0 else 0 %}
+                {% set skip_pct = (run.skipped / run.total_tests * 100) if run.total_tests > 0 else 0 %}
+                
+                <div class="progress mt-4" style="height: 28px;">
+                    <div class="progress-bar" style="width: '{{ pass_pct }}%'; background: linear-gradient(90deg, #10b981, #059669); font-weight: 600; font-size: 0.8rem;">
+                        {{ run.passed }} Passed
+                    </div>
+                    <div class="progress-bar" style="width: '{{ fail_pct }}%'; background: linear-gradient(90deg, #ef4444, #dc2626); font-weight: 600; font-size: 0.8rem;">
+                        {{ run.failed }} Failed
+                    </div>
+                    <div class="progress-bar" style="width: '{{ skip_pct }}%'; background: linear-gradient(90deg, #f59e0b, #d97706); font-weight: 600; font-size: 0.8rem;">
+                        {{ run.skipped }} Skipped
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Failed Tests -->
+{% if failed_tests %}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)); border-bottom: 2px solid rgba(239, 68, 68, 0.3);">
+                <h5 style="margin: 0; color: #ef4444;"><i class="bi bi-x-circle"></i> Failed Tests ({{ failed_tests|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% for test in failed_tests %}
+                <div class="failure-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div style="flex: 1;">
+                            <strong style="color: #f1f5f9;">{{ test.test_name }}</strong>
+                            <small class="text-muted d-block" style="margin-top: 0.25rem;">{{ test.test_file }}</small>
+                        </div>
+                        <small style="color: var(--text-secondary); background: rgba(239, 68, 68, 0.1); padding: 4px 8px; border-radius: 4px; white-space: nowrap; margin-left: 1rem;">
+                            {{ "%.3f"|format(test.duration) }}s
+                        </small>
+                    </div>
+                    {% if test.error_message %}
+                    <div class="error-message mt-3" style="max-height: 250px; overflow-y: auto;">
+                        <strong style="color: #fca5a5; display: block; margin-bottom: 0.5rem;">Error:</strong>
+                        {{ test.error_message }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Coverage Report -->
+{% if coverage %}
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-file-code"></i> Code Coverage Report</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Module coverage analysis</small>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%;">Module</th>
+                                <th style="width: 15%; text-align: center;">Statements</th>
+                                <th style="width: 15%; text-align: center;">Missing</th>
+                                <th style="width: 30%;">Coverage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in coverage %}
+                            <tr>
+                                <td><code style="color: #f1f5f9;">{{ c.module_name }}</code></td>
+                                <td style="text-align: center; color: #f1f5f9;">{{ c.statements }}</td>
+                                <td style="text-align: center; color: #f1f5f9;">{{ c.missing }}</td>
+                                <td>
+                                    <div class="progress" style="height: 22px;">
+                                        <div class="coverage-bar" data-coverage="{{ c.coverage_percent }}" style="width: '{{ c.coverage_percent }}%'; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #f1f5f9;">
+                                            {{ "%.1f"|format(c.coverage_percent) }}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- All Tests List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-list-ul"></i> Test Results</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">All {{ results|length }} test cases</small>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%;">Status</th>
+                                <th style="width: 60%;">Test Name</th>
+                                <th style="width: 20%;">File</th>
+                                <th style="width: 12%; text-align: right;">Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in results %}
+                            <tr>
+                                <td>
+                                    <span class="status-badge status-{{ test.status }}">
+                                        {{ test.status|upper }}
+                                    </span>
+                                </td>
+                                <td><strong style="color: #f1f5f9;">{{ test.test_name.split('::')[-1] }}</strong></td>
+                                <td><small style="color: var(--text-muted);">{{ test.test_file }}</small></td>
+                                <td style="text-align: right;"><small style="color: #f1f5f9;">{{ "%.3f"|format(test.duration) }}s</small></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Apply dynamic colors to coverage bars
+    document.querySelectorAll('.coverage-bar').forEach(bar => {
+        const coverage = parseFloat(bar.getAttribute('data-coverage'));
+        if (coverage >= 80) {
+            bar.style.background = 'linear-gradient(90deg, #10b981, #059669)';
+        } else if (coverage >= 50) {
+            bar.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)';
+        } else {
+            bar.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)';
+        }
+    });
+</script>
+{% endblock %}

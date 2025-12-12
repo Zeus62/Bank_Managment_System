@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Transaction History - Bank Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-clock-history"></i> Transaction History</h2>
+    <a href="{{ url_for('transactions.search') }}" class="btn btn-outline-primary">
+        <i class="bi bi-search"></i> Search Transactions
+    </a>
+</div>
+
+{% if transactions %}
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Type</th>
+                        <th>Account</th>
+                        <th>Description</th>
+                        <th>Reference</th>
+                        <th class="text-end">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>
+                            {{ transaction.timestamp.strftime('%b %d, %Y') }}
+                            <br>
+                            <small class="text-muted">{{ transaction.timestamp.strftime('%H:%M:%S') }}</small>
+                        </td>
+                        <td>
+                            {% if transaction.transaction_type == 'deposit' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-arrow-down-circle"></i> Deposit
+                                </span>
+                            {% elif transaction.transaction_type == 'withdrawal' %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-arrow-up-circle"></i> Withdrawal
+                                </span>
+                            {% else %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-arrow-left-right"></i> Transfer
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('accounts.view_account', account_id=transaction.account_id) }}">
+                                {{ transaction.account.account_number }}
+                            </a>
+                        </td>
+                        <td>{{ transaction.description or '-' }}</td>
+                        <td><code>{{ transaction.reference_number }}</code></td>
+                        <td class="text-end">
+                            <strong class="{% if transaction.amount >= 0 %}transaction-positive{% else %}transaction-negative{% endif %}">
+                                {% if transaction.amount >= 0 %}+{% endif %}${{ "%.2f"|format(transaction.amount|abs) }}
+                            </strong>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="bi bi-receipt" style="font-size: 4rem; color: #ccc;"></i>
+        <h4 class="mt-3">No Transactions Yet</h4>
+        <p class="text-muted">Your transaction history will appear here.</p>
+        <div class="mt-3">
+            <a href="{{ url_for('transactions.deposit') }}" class="btn btn-success me-2">
+                <i class="bi bi-arrow-down-circle"></i> Make a Deposit
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

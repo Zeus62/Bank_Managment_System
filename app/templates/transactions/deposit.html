@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Deposit - Bank Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4><i class="bi bi-arrow-down-circle"></i> Deposit Funds</h4>
+            </div>
+            <div class="card-body p-4">
+                {% if accounts %}
+                <form method="POST" action="{{ url_for('transactions.deposit') }}">
+                    <div class="mb-3">
+                        <label for="account_id" class="form-label">Select Account</label>
+                        <select class="form-select" id="account_id" name="account_id" required>
+                            <option value="">Choose an account...</option>
+                            {% for account in accounts %}
+                            <option value="{{ account.id }}">
+                                {{ account.account_type | capitalize }} - {{ account.account_number }} 
+                                (Balance: ${{ "%.2f"|format(account.balance) }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   min="0.01" step="0.01" required placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <input type="text" class="form-control" id="description" name="description" 
+                               placeholder="e.g., Salary, Gift, etc.">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Deposit
+                        </button>
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-wallet" style="font-size: 4rem; color: #ccc;"></i>
+                    <h5 class="mt-3">No Active Accounts</h5>
+                    <p class="text-muted">You need an active account to make a deposit.</p>
+                    <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create Account
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

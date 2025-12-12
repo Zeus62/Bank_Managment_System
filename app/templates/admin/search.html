@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Search{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-search"></i> Admin Search</h2>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Admin
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.search') }}">
+            <div class="row">
+                <div class="col-md-5">
+                    <input type="text" class="form-control" name="q" 
+                           placeholder="Search..." value="{{ query }}">
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" name="type">
+                        <option value="users" {% if search_type == 'users' %}selected{% endif %}>Users</option>
+                        <option value="accounts" {% if search_type == 'accounts' %}selected{% endif %}>Accounts</option>
+                        <option value="transactions" {% if search_type == 'transactions' %}selected{% endif %}>Transactions</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if query %}
+<h5>Results for "{{ query }}" in {{ search_type | capitalize }}</h5>
+
+{% if results %}
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    {% if search_type == 'users' %}
+                        <th>Username</th><th>Email</th><th>Role</th><th>Action</th>
+                    {% elif search_type == 'accounts' %}
+                        <th>Account Number</th><th>Owner</th><th>Balance</th><th>Status</th>
+                    {% else %}
+                        <th>Reference</th><th>Type</th><th>Amount</th><th>Date</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in results %}
+                <tr>
+                    {% if search_type == 'users' %}
+                        <td>{{ item.username }}</td>
+                        <td>{{ item.email }}</td>
+                        <td>{{ item.role }}</td>
+                        <td><a href="{{ url_for('admin.view_user', user_id=item.id) }}" class="btn btn-sm btn-primary">View</a></td>
+                    {% elif search_type == 'accounts' %}
+                        <td>{{ item.account_number }}</td>
+                        <td>{{ item.owner.username }}</td>
+                        <td>${{ "%.2f"|format(item.balance) }}</td>
+                        <td>{{ item.status }}</td>
+                    {% else %}
+                        <td>{{ item.reference_number }}</td>
+                        <td>{{ item.transaction_type }}</td>
+                        <td>${{ "%.2f"|format(item.amount|abs) }}</td>
+                        <td>{{ item.timestamp.strftime('%b %d, %Y') }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">No results found.</div>
+{% endif %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Transactions - Bank Management System{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-search"></i> Search Transactions</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('transactions.search') }}">
+            <div class="row">
+                <div class="col-md-5">
+                    <label class="form-label">Search</label>
+                    <input type="text" class="form-control" name="q" 
+                           placeholder="Reference number or description..." 
+                           value="{{ query }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Transaction Type</label>
+                    <select class="form-select" name="type">
+                        <option value="">All Types</option>
+                        <option value="deposit" {% if transaction_type == 'deposit' %}selected{% endif %}>
+                            Deposit
+                        </option>
+                        <option value="withdrawal" {% if transaction_type == 'withdrawal' %}selected{% endif %}>
+                            Withdrawal
+                        </option>
+                        <option value="transfer" {% if transaction_type == 'transfer' %}selected{% endif %}>
+                            Transfer
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if query or transaction_type %}
+    <h5>Search Results</h5>
+    
+    {% if transactions %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Reference</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction.timestamp.strftime('%b %d, %Y %H:%M') }}</td>
+                            <td>
+                                {% if transaction.transaction_type == 'deposit' %}
+                                    <span class="badge bg-success">Deposit</span>
+                                {% elif transaction.transaction_type == 'withdrawal' %}
+                                    <span class="badge bg-warning text-dark">Withdrawal</span>
+                                {% else %}
+                                    <span class="badge bg-info">Transfer</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ transaction.description or '-' }}</td>
+                            <td><code>{{ transaction.reference_number }}</code></td>
+                            <td class="text-end {% if transaction.amount >= 0 %}transaction-positive{% else %}transaction-negative{% endif %}">
+                                {% if transaction.amount >= 0 %}+{% endif %}${{ "%.2f"|format(transaction.amount|abs) }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <p class="text-muted mt-2">Found {{ transactions|length }} transaction(s)</p>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i> No transactions found matching your criteria.
+    </div>
+    {% endif %}
+{% endif %}
+
+<div class="mt-3">
+    <a href="{{ url_for('transactions.history') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to History
+    </a>
+</div>
+{% endblock %}

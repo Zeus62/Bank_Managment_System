@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Accounts - Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-wallet2"></i> Manage Accounts</h2>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Admin
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Account Number</th>
+                        <th>Owner</th>
+                        <th>Type</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>{{ account.account_number }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.view_user', user_id=account.user_id) }}">
+                                {{ account.owner.username }}
+                            </a>
+                        </td>
+                        <td>{{ account.account_type | capitalize }}</td>
+                        <td>${{ "%.2f"|format(account.balance) }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'success' if account.status == 'active' else 'warning' if account.status == 'frozen' else 'secondary' }}">
+                                {{ account.status | capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ account.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            {% if account.status != 'closed' %}
+                            <form method="POST" 
+                                  action="{{ url_for('admin.toggle_account_status', account_id=account.id) }}"
+                                  style="display: inline;">
+                                <button type="submit" 
+                                        class="btn btn-sm btn-{{ 'warning' if account.status == 'active' else 'success' }}"
+                                        onclick="return confirm('Are you sure?')">
+                                    {% if account.status == 'active' %}
+                                        <i class="bi bi-snow"></i> Freeze
+                                    {% else %}
+                                        <i class="bi bi-unlock"></i> Unfreeze
+                                    {% endif %}
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Transfer - Bank Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h4><i class="bi bi-arrow-left-right"></i> Transfer Funds</h4>
+            </div>
+            <div class="card-body p-4">
+                {% if accounts %}
+                <form method="POST" action="{{ url_for('transactions.transfer') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">From</h6>
+                            <div class="mb-3">
+                                <label for="from_account_id" class="form-label">Your Account</label>
+                                <select class="form-select" id="from_account_id" name="from_account_id" 
+                                        required onchange="updateTransferMax()">
+                                    <option value="">Select source account...</option>
+                                    {% for account in accounts %}
+                                    <option value="{{ account.id }}" data-balance="{{ account.balance }}">
+                                        {{ account.account_type | capitalize }} - {{ account.account_number }} 
+                                        (${{ "%.2f"|format(account.balance) }})
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">To</h6>
+                            <div class="mb-3">
+                                <label for="to_account_number" class="form-label">Recipient Account Number</label>
+                                <input type="text" class="form-control" id="to_account_number" 
+                                       name="to_account_number" required 
+                                       placeholder="Enter 12-digit account number"
+                                       pattern="[0-9]{12}" maxlength="12">
+                                <div class="form-text">Enter the recipient's 12-digit account number</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="amount" name="amount" 
+                                   min="0.01" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-text" id="transfer-balance-info"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <input type="text" class="form-control" id="description" name="description" 
+                               placeholder="e.g., Rent payment, Gift, etc.">
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Note:</strong> Transfers are processed immediately and cannot be reversed.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-info btn-lg" id="transfer-btn">
+                            <i class="bi bi-send"></i> Transfer
+                        </button>
+                        <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+                
+                <script>
+                    function updateTransferMax() {
+                        const select = document.getElementById('from_account_id');
+                        const selectedOption = select.options[select.selectedIndex];
+                        const balance = selectedOption.getAttribute('data-balance');
+                        const amountInput = document.getElementById('amount');
+                        const balanceInfo = document.getElementById('transfer-balance-info');
+                        
+                        if (balance) {
+                            amountInput.max = balance;
+                            balanceInfo.textContent = 'Available balance: $' + parseFloat(balance).toFixed(2);
+                        } else {
+                            balanceInfo.textContent = '';
+                        }
+                    }
+                </script>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-wallet" style="font-size: 4rem; color: #ccc;"></i>
+                    <h5 class="mt-3">No Active Accounts</h5>
+                    <p class="text-muted">You need an active account to make a transfer.</p>
+                    <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create Account
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Accounts - Bank Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-wallet2"></i> My Accounts</h2>
+    <div>
+        <a href="{{ url_for('accounts.search') }}" class="btn btn-outline-secondary me-2">
+            <i class="bi bi-search"></i> Search
+        </a>
+        <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New Account
+        </a>
+    </div>
+</div>
+
+{% if accounts %}
+    <div class="row">
+        {% for account in accounts %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 {% if account.status == 'closed' %}bg-light{% endif %}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span class="badge bg-{{ 'primary' if account.account_type == 'savings' else 'success' }}">
+                        {{ account.account_type | capitalize }}
+                    </span>
+                    <span class="badge bg-{{ 'success' if account.status == 'active' else 'secondary' }}">
+                        {{ account.status | capitalize }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h6 class="card-subtitle mb-2 text-muted">Account Number</h6>
+                    <p class="card-text">{{ account.account_number }}</p>
+                    
+                    <h6 class="card-subtitle mb-2 text-muted">Balance</h6>
+                    <h4 class="text-primary">${{ "%.2f"|format(account.balance) }}</h4>
+                    
+                    <small class="text-muted">
+                        Opened: {{ account.created_at.strftime('%b %d, %Y') }}
+                    </small>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('accounts.view_account', account_id=account.id) }}" 
+                       class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                    {% if account.status == 'active' %}
+                    <a href="{{ url_for('transactions.deposit') }}?account={{ account.id }}" 
+                       class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-plus"></i> Deposit
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-wallet" style="font-size: 4rem; color: #ccc;"></i>
+            <h4 class="mt-3">No Accounts Yet</h4>
+            <p class="text-muted">Create your first bank account to get started.</p>
+            <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-circle"></i> Create Account
+            </a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

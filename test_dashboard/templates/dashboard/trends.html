@@ -1,0 +1,270 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Trends - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h2>
+        <i class="bi bi-graph-up-arrow"></i> Test Trends
+    </h2>
+    <p>Test execution trends over the last 30 days</p>
+</div>
+
+<div class="row mb-5">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-percent"></i> Pass Rate Trend</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Success rate over time</small>
+            </div>
+            <div class="card-body">
+                <canvas id="passRateChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-bar-chart"></i> Test Results Trend</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Passed vs Failed tests</small>
+            </div>
+            <div class="card-body">
+                <canvas id="resultsChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-5">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-file-code"></i> Code Coverage Trend</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Coverage percentage over time</small>
+            </div>
+            <div class="card-body">
+                <canvas id="coverageChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 style="margin: 0;"><i class="bi bi-hourglass-split"></i> Execution Duration Trend</h5>
+                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Test execution time</small>
+            </div>
+            <div class="card-body">
+                <canvas id="durationChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden data for JavaScript -->
+<div id="trend-data" 
+     data-labels="[{% for run in runs %}&quot;{{ run.start_time.strftime('%m/%d') }}&quot;{% if not loop.last %},{% endif %}{% endfor %}]"
+     data-pass-rate="[{% for run in runs %}{{ run.pass_rate }}{% if not loop.last %},{% endif %}{% endfor %}]"
+     data-passed="[{% for run in runs %}{{ run.passed }}{% if not loop.last %},{% endif %}{% endfor %}]"
+     data-failed="[{% for run in runs %}{{ run.failed }}{% if not loop.last %},{% endif %}{% endfor %}]"
+     data-coverage="[{% for run in runs %}{{ run.coverage }}{% if not loop.last %},{% endif %}{% endfor %}]"
+     data-duration="[{% for run in runs %}{{ run.duration }}{% if not loop.last %},{% endif %}{% endfor %}]"
+     style="display: none;">
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Get data from hidden element
+    var trendDataElement = document.getElementById('trend-data');
+    
+    var chartData = {
+        labels: JSON.parse(trendDataElement.getAttribute('data-labels') || '[]'),
+        passRate: JSON.parse(trendDataElement.getAttribute('data-pass-rate') || '[]'),
+        passed: JSON.parse(trendDataElement.getAttribute('data-passed') || '[]'),
+        failed: JSON.parse(trendDataElement.getAttribute('data-failed') || '[]'),
+        coverage: JSON.parse(trendDataElement.getAttribute('data-coverage') || '[]'),
+        duration: JSON.parse(trendDataElement.getAttribute('data-duration') || '[]')
+    };
+    
+    var chartColors = {
+        primary: '#6366f1',
+        success: '#10b981',
+        danger: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6',
+        text: '#e2e8f0',
+        textMuted: '#94a3b8',
+        grid: '#334155'
+    };
+    
+    var commonChartOptions = {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            filler: {
+                propagate: true
+            },
+            legend: { 
+                labels: { 
+                    color: chartColors.text,
+                    usePointStyle: true,
+                    padding: 20,
+                    font: {
+                        size: 13,
+                        weight: 500
+                    }
+                } 
+            }
+        },
+        scales: {
+            y: { 
+                ticks: { color: chartColors.textMuted },
+                grid: { color: chartColors.grid, drawBorder: false } 
+            },
+            x: { 
+                ticks: { color: chartColors.textMuted },
+                grid: { color: chartColors.grid, drawBorder: false } 
+            }
+        }
+    };
+    
+    // Pass Rate Chart
+    new Chart(document.getElementById('passRateChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Pass Rate %',
+                data: chartData.passRate,
+                borderColor: chartColors.success,
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: chartColors.success,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                ...commonChartOptions.scales,
+                y: {
+                    ...commonChartOptions.scales.y,
+                    max: 100,
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Results Chart (Stacked Bar)
+    new Chart(document.getElementById('resultsChart'), {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                { 
+                    label: 'Passed', 
+                    data: chartData.passed, 
+                    backgroundColor: chartColors.success,
+                    borderColor: chartColors.success,
+                    borderWidth: 0,
+                    borderRadius: 4
+                },
+                { 
+                    label: 'Failed', 
+                    data: chartData.failed, 
+                    backgroundColor: chartColors.danger,
+                    borderColor: chartColors.danger,
+                    borderWidth: 0,
+                    borderRadius: 4
+                }
+            ]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                ...commonChartOptions.scales,
+                y: { 
+                    ...commonChartOptions.scales.y,
+                    stacked: true,
+                    beginAtZero: true
+                },
+                x: { 
+                    ...commonChartOptions.scales.x,
+                    stacked: true
+                }
+            }
+        }
+    });
+    
+    // Coverage Chart
+    new Chart(document.getElementById('coverageChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Coverage %',
+                data: chartData.coverage,
+                borderColor: chartColors.warning,
+                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: chartColors.warning,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                ...commonChartOptions.scales,
+                y: {
+                    ...commonChartOptions.scales.y,
+                    max: 100,
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Duration Chart
+    new Chart(document.getElementById('durationChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Duration (seconds)',
+                data: chartData.duration,
+                borderColor: chartColors.info,
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: chartColors.info,
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            ...commonChartOptions,
+            scales: {
+                ...commonChartOptions.scales,
+                y: { 
+                    ...commonChartOptions.scales.y,
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

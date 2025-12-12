@@ -1,0 +1,96 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Test Failures - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <h2>
+        <i class="bi bi-exclamation-triangle"></i> Test Failures
+    </h2>
+    <p>All failed test cases across test runs</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if failures.items %}
+            {% for failure in failures.items %}
+            <div class="failure-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div style="flex: 1;">
+                        <h6 style="margin: 0 0 0.5rem 0; font-weight: 600; color: #f1f5f9;">{{ failure.test_name }}</h6>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <small class="text-muted">
+                                <i class="bi bi-file-earmark"></i> {{ failure.test_file }}
+                            </small>
+                            <small style="color: var(--text-muted); padding: 2px 8px; background: rgba(99, 102, 241, 0.1); border-radius: 4px;">
+                                {{ "%.3f"|format(failure.duration) }}s
+                            </small>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <small class="text-muted" style="display: block; margin-bottom: 0.5rem;">
+                            {{ failure.timestamp.strftime('%Y-%m-%d') }}
+                        </small>
+                        <small style="color: var(--text-secondary); font-weight: 500;">
+                            {{ failure.timestamp.strftime('%H:%M:%S') }}
+                        </small>
+                    </div>
+                </div>
+                {% if failure.error_message %}
+                <div class="error-message mt-3" style="max-height: 200px; overflow-y: auto;">
+                    <strong style="color: #fca5a5; display: block; margin-bottom: 0.5rem;">Error Details:</strong>
+                    {{ failure.error_message }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <!-- Pagination -->
+            {% if failures.pages > 1 %}
+            <div style="border-top: 1px solid var(--border-color); margin-top: 2rem; padding-top: 1.5rem;">
+                <nav class="mb-3">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if failures.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('failures', page=failures.prev_num) }}">
+                                <i class="bi bi-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="page-item disabled">
+                            <span class="page-link">Page <strong>{{ failures.page }}</strong> of <strong>{{ failures.pages }}</strong></span>
+                        </li>
+                        
+                        {% if failures.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('failures', page=failures.next_num) }}">
+                                Next <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next <i class="bi bi-chevron-right"></i></span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">
+                    <i class="bi bi-check-circle" style="color: #10b981; opacity: 0.8;"></i>
+                </div>
+                <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">Perfect! No Failures!</h4>
+                <p class="text-muted">All tests are passing. Excellent work! 🎉</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
