@@ -105,7 +105,7 @@ Bank_Managment_System/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Bank_Managment_System.git
+   git clone https://github.com/Zeus62/Bank_Managment_System.git
    cd Bank_Managment_System
    ```
 
