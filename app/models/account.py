@@ -4,6 +4,14 @@ import random
 import string
 
 class Account(db.Model):
+
+    """
+    Account Model
+    -------------
+    Represents a bank account in the system.
+    
+    Each user can have multiple accounts (checking, savings, etc.)
+    """
     __tablename__ = 'accounts'
     
     id = db.Column(db.Integer, primary_key=True)

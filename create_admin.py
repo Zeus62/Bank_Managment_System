@@ -4,7 +4,6 @@ from app.models.user import User
 app = create_app()
 
 with app.app_context():
-    # Option 1: Create a new admin user
     admin = User.query.filter_by(username='admin').first()
     
     if not admin:

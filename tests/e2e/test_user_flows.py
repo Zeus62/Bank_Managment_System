@@ -13,18 +13,62 @@ from app.models.user import User
 from app.models.account import Account
 
 class TestConfig:
+    """
+    Special configuration for E2E tests
+    
+    WHY A SEPARATE CONFIG?
+    ─────────────────────
+    • TESTING = True: Flask knows this is a test
+    • Separate database: Don't mess with real data
+    • CSRF disabled: Forms work without tokens (easier testing)
+    """
     TESTING = True
+    # Tells Flask this is a test environment
+    # Changes some behaviors (e.g., error handling)
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test_e2e.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'test-secret-key'
     WTF_CSRF_ENABLED = False
+    # WHY?
+    # CSRF tokens change every request
+    # Selenium would need to find and include them
+    # Disabling makes testing easier
+    # IMPORTANT: Only disable in tests!
 
 class TestUserFlowsE2E:
     """End-to-End tests for complete user flows"""
     
+    """
+    End-to-End tests for complete user flows
+    
+    WHAT IS A TEST CLASS?
+    ─────────────────────
+    Groups related tests together.
+    Shared fixtures (setup/teardown) apply to all tests in class.
+    
+    CLASS STRUCTURE:
+    ┌─────────────────────────────────────────────────────────────┐
+    │  TestUserFlowsE2E                                           │
+    │  ├── Fixtures (setup)                                       │
+    │  │   ├── app()        → Creates Flask application          │
+    │  │   ├── live_server() → Starts server on port 5001        │
+    │  │   └── driver()     → Creates Chrome browser             │
+    │  │                                                          │
+    │  └── Test Methods                                           │
+    │      ├── test_complete_login_flow()                        │
+    │      ├── test_login_with_invalid_credentials()             │
+    │      └── test_complete_registration_flow()                 │
+    └─────────────────────────────────────────────────────────────┘
+    """
     @pytest.fixture(scope='class')
     def app(self):
         """Create application for E2E testing"""
+
+        """ 
+        A fixture is reusable setup/teardown code.
+        Instead of repeating the same setup in every test,
+        you define it once and pytest injects it automatically.
+        """
         application = create_app()
         application.config.from_object(TestConfig)
         
@@ -39,23 +83,45 @@ class TestUserFlowsE2E:
             user.set_password('E2EPassword123')
             db.session.add(user)
             db.session.commit()
-            
-        yield application
         
+        # YIELD: Pause here, let tests run, then continue
+        yield application
+
+        # CLEANUP: After all tests in class are done
         with application.app_context():
             db.drop_all()
     
     @pytest.fixture(scope='class')
     def live_server(self, app):
-        """Start a live server for Selenium tests"""
-        # Run Flask app in a separate thread
+        """
+        Start a live server for Selenium tests
+        
+        WHY A LIVE SERVER?
+        ──────────────────
+        Selenium needs a REAL server running.
+        It's a real browser making real HTTP requests.
+        We can't use Flask's test client here.
+        
+        THREADING:
+        ──────────
+        We run Flask in a separate thread so:
+        • Flask server runs continuously
+        • Our tests can continue executing
+        • Both happen simultaneously
+        """
+        # Create a background thread for the server
         server_thread = threading.Thread(
             target=lambda: app.run(port=5001, use_reloader=False, threaded=True)
         )
+
+        # daemon=True means: kill this thread when main program exits
         server_thread.daemon = True
         server_thread.start()
         time.sleep(2)  # Wait for server to start
+
+        # Return the server URL for tests to use
         yield 'http://localhost:5001'
+        # daemon thread dies automatically when tests end
     
     @pytest.fixture(scope='class')
     def driver(self):
@@ -65,46 +131,257 @@ class TestUserFlowsE2E:
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument('--disable-gpu')
+        # This affects what elements are visible/clickable
         chrome_options.add_argument('--window-size=1920,1080')
-        
+
+        # HEADLESS MODE: Browser runs without visible window
+        # WHY HEADLESS?
+        # • Faster (no GUI rendering)
+        # • Works on servers without displays
+        # • CI/CD pipelines can run tests
+        # • Doesn't interrupt your work
+
         service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+        # ChromeDriverManager().install():
+        #   1. Detects your Chrome browser version
+        #   2. Downloads matching ChromeDriver
+        #   3. Caches it locally
+        #   4. Returns path to the executable
+        #
+        # Service: Wraps the ChromeDriver executable
+        
+        # ─────────────────────────────────────────────────────────────
+        # STEP 3: CREATE BROWSER INSTANCE
+        # ─────────────────────────────────────────────────────────────
+        
+        driver = webdriver.Chrome(
+            service=service,
+            options=chrome_options
+        )
+        # This LAUNCHES Chrome browser (headlessly)
+        # driver is now your remote control for the browser
+        
         driver.implicitly_wait(10)
+        # IMPLICIT WAIT: If element not found, wait up to 10 seconds
+        # Selenium will retry finding the element during this time
+        # Helps with pages that load dynamically
+        
+        # ─────────────────────────────────────────────────────────────
+        # STEP 4: PROVIDE DRIVER TO TESTS
+        # ─────────────────────────────────────────────────────────────
         
         yield driver
+        # Tests run here, using the driver
+        
+        # ─────────────────────────────────────────────────────────────
+        # STEP 5: CLEANUP
+        # ─────────────────────────────────────────────────────────────
         
         driver.quit()
+        # Close browser and stop ChromeDriver process
+        # IMPORTANT: Always quit! Otherwise Chrome processes pile up
     
     # ==================== LOGIN FLOW TESTS ====================
     
+    # ═══════════════════════════════════════════════════════════════════
+#                      TEST METHODS
+# ═══════════════════════════════════════════════════════════════════
+
+@pytest.mark.e2e
+@pytest.mark.slow
+def test_complete_login_flow(self, driver, live_server):
+    """
+    Test complete login flow from start to dashboard
+    
+    DECORATORS EXPLAINED:
+    ─────────────────────
     @pytest.mark.e2e
+        Tags this test as "e2e"
+        Run only e2e tests: pytest -m e2e
+        Skip e2e tests: pytest -m "not e2e"
+    
     @pytest.mark.slow
-    def test_complete_login_flow(self, driver, live_server):
-        """Test complete login flow from start to dashboard"""
-        # Navigate to login page
-        driver.get(f'{live_server}/auth/login')
-        
-        # Verify login page loaded
-        assert 'Login' in driver.title or 'Login' in driver.page_source
-        
-        # Fill in login form
-        username_field = driver.find_element(By.ID, 'username')
-        password_field = driver.find_element(By.ID, 'password')
-        
-        username_field.clear()
-        username_field.send_keys('e2euser')
-        password_field.clear()
-        password_field.send_keys('E2EPassword123')
-        
-        # Submit form
-        submit_button = driver.find_element(By.CSS_SELECTOR, 'button[type="submit"]')
-        submit_button.click()
-        
-        # Wait for redirect
-        time.sleep(2)
-        
-        # Verify successful login (should be on dashboard or see welcome message)
-        assert 'Dashboard' in driver.page_source or 'Welcome' in driver.page_source
+        Tags this test as "slow"
+        E2E tests ARE slow (real browser, network, etc.)
+        Skip slow tests: pytest -m "not slow"
+    
+    PARAMETERS:
+    ───────────
+    self: Reference to the test class instance
+    driver: Chrome browser (from fixture)
+    live_server: URL like 'http://localhost:5001' (from fixture)
+    """
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 1: NAVIGATE TO LOGIN PAGE
+    # ─────────────────────────────────────────────────────────────
+    
+    driver.get(f'{live_server}/auth/login')
+    # driver.get(url): Like typing URL in address bar and pressing Enter
+    # Browser navigates to the page
+    # Waits for page to load
+    
+    """
+    WHAT HAPPENS:
+    
+    ┌──────────────────────────────────────────┐
+    │  🌐 Chrome (Headless)                    │
+    │  ─────────────────────────────────────── │
+    │  localhost:5001/auth/login               │
+    │  ─────────────────────────────────────── │
+    │                                          │
+    │        ┌────────────────────┐           │
+    │        │      LOGIN         │           │
+    │        ├────────────────────┤           │
+    │        │ Username: [      ] │           │
+    │        │ Password: [      ] │           │
+    │        │                    │           │
+    │        │    [  Login  ]     │           │
+    │        └────────────────────┘           │
+    │                                          │
+    └──────────────────────────────────────────┘
+    """
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 2: VERIFY PAGE LOADED
+    # ─────────────────────────────────────────────────────────────
+    
+    assert 'Login' in driver.title or 'Login' in driver.page_source
+    # driver.title: The <title> tag content
+    # driver.page_source: Entire HTML of the page
+    #
+    # We check if "Login" appears anywhere
+    # This confirms we're on the right page
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 3: FIND INPUT ELEMENTS
+    # ─────────────────────────────────────────────────────────────
+    
+    username_field = driver.find_element(By.ID, 'username')
+    password_field = driver.find_element(By.ID, 'password')
+    # find_element: Find ONE element matching the criteria
+    # By.ID: Search by HTML id attribute
+    #
+    # HTML looks like:
+    # <input type="text" id="username" name="username">
+    # <input type="password" id="password" name="password">
+    
+    """
+    ELEMENT LOCATION STRATEGIES:
+    ────────────────────────────
+    
+    By.ID           → find_element(By.ID, 'username')
+                      <input id="username">
+                      
+    By.NAME         → find_element(By.NAME, 'email')
+                      <input name="email">
+                      
+    By.CLASS_NAME   → find_element(By.CLASS_NAME, 'btn-primary')
+                      <button class="btn-primary">
+                      
+    By.TAG_NAME     → find_element(By.TAG_NAME, 'h1')
+                      <h1>...</h1>
+                      
+    By.CSS_SELECTOR → find_element(By.CSS_SELECTOR, 'button[type="submit"]')
+                      <button type="submit">
+                      Most flexible, uses CSS selectors
+                      
+    By.XPATH        → find_element(By.XPATH, '//button[@type="submit"]')
+                      <button type="submit">
+                      Most powerful, uses XPath expressions
+                      
+    By.LINK_TEXT    → find_element(By.LINK_TEXT, 'Register')
+                      <a href="/register">Register</a>
+                      
+    By.PARTIAL_LINK_TEXT → find_element(By.PARTIAL_LINK_TEXT, 'Reg')
+                           <a href="/register">Register Here</a>
+    """
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 4: ENTER TEXT INTO FIELDS
+    # ─────────────────────────────────────────────────────────────
+    
+    username_field.clear()
+    # clear(): Remove any existing text in the field
+    # Important if field has placeholder or default value
+    
+    username_field.send_keys('e2euser')
+    # send_keys(): Type text into the field
+    # Simulates keyboard input, character by character
+    
+    """
+    WHAT HAPPENS:
+    
+    Before send_keys:
+    ┌────────────────────┐
+    │ Username: [      ] │
+    └────────────────────┘
+    
+    After send_keys('e2euser'):
+    ┌────────────────────┐
+    │ Username: [e2euser]│
+    └────────────────────┘
+    """
+    
+    password_field.clear()
+    password_field.send_keys('E2EPassword123')
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 5: CLICK SUBMIT BUTTON
+    # ─────────────────────────────────────────────────────────────
+    
+    submit_button = driver.find_element(
+        By.CSS_SELECTOR, 
+        'button[type="submit"]'
+    )
+    # CSS SELECTOR: button[type="submit"]
+    # Finds: <button type="submit">Login</button>
+    #
+    # CSS Selector is powerful:
+    # • 'button' - tag name
+    # • '[type="submit"]' - attribute selector
+    # • Combined: button with type="submit"
+    
+    submit_button.click()
+    # click(): Simulate mouse click on the element
+    # This submits the form
+    
+    """
+    WHAT HAPPENS AFTER CLICK:
+    
+    1. Form submits (POST /auth/login)
+    2. Server validates credentials
+    3. Server sets session cookie
+    4. Server redirects to dashboard
+    5. Browser follows redirect
+    6. Dashboard page loads
+    """
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 6: WAIT FOR REDIRECT
+    # ─────────────────────────────────────────────────────────────
+    
+    time.sleep(2)
+    # Wait 2 seconds for page to load
+    #
+    # NOTE: time.sleep is NOT ideal!
+    # Better approach: WebDriverWait (explicit wait)
+    #
+    # WebDriverWait(driver, 10).until(
+    #     EC.presence_of_element_located((By.ID, 'dashboard'))
+    # )
+    # This waits UP TO 10 seconds for dashboard element to appear
+    
+    # ─────────────────────────────────────────────────────────────
+    # STEP 7: VERIFY LOGIN SUCCESS
+    # ─────────────────────────────────────────────────────────────
+    
+    assert 'Dashboard' in driver.page_source or 'Welcome' in driver.page_source
+    # Check if we see "Dashboard" or "Welcome" on the page
+    # This confirms login was successful
+    #
+    # If login failed, we'd still be on login page
+    # and this assertion would fail
     
     @pytest.mark.e2e
     @pytest.mark.slow

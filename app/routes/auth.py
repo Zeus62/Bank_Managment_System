@@ -7,6 +7,12 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Registration Route
+    ------------------
+    GET: Display registration form
+    POST: Process new user registration
+    """
     # If user is already logged in, redirect to dashboard
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
@@ -43,7 +49,6 @@ def register():
         # Create new user
         user = User(username=username, email=email)
         user.set_password(password)
-        
         db.session.add(user)
         db.session.commit()
         
@@ -54,10 +59,27 @@ def register():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Login Route
+    -----------
+    GET: Display login form
+    POST: Process login attempt
+    
+    Flow:
+    1. User visits /login
+    2. Sees login form
+    3. Enters credentials
+    4. Clicks submit
+    5. Server validates
+    6. If valid: redirect to dashboard
+    7. If invalid: show error
+    """
     # If user is already logged in, redirect to dashboard
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))
     
+    
+    # Handle form submission
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -78,7 +100,8 @@ def login():
             return redirect(next_page or url_for('dashboard.index'))
         else:
             flash('Invalid username or password.', 'danger')
-    
+
+    # GET request: show login form
     return render_template('auth/login.html')
 
 @auth_bp.route('/logout')

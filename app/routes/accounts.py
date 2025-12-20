@@ -4,6 +4,8 @@ from app import db
 from app.models.account import Account
 from app.models.transaction import Transaction
 
+# WHAT IS A DECORATOR? A function that wraps another function to add behavior.
+
 accounts_bp = Blueprint('accounts', __name__, url_prefix='/accounts')
 
 @accounts_bp.route('/')
@@ -56,9 +58,20 @@ def create_account():
     
     return render_template('accounts/create.html')
 
+
 @accounts_bp.route('/<int:account_id>')
 @login_required
 def view_account(account_id):
+    """
+    View details of a specific account
+
+    URL: /accounts/123
+    Method: GET
+
+    The <int:account_id> is a URL variable:
+    - <int:...> means it must be an integer
+    - Flask automatically converts it and passes to function
+    """
     account = Account.query.get_or_404(account_id)
     
     # Check if user owns this account
