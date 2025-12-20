@@ -1,5 +1,6 @@
 """
 Populate the dashboard with test data
+utility script that fills the test dashboard with fake/sample data for demonstration and development purposes
 """
 import os
 import sys

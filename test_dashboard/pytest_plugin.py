@@ -12,7 +12,7 @@ from datetime import datetime
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-
+#A simple container to accumulate test results as tests run
 class TestResultCollector:
     def __init__(self):
         self.run_id = str(uuid.uuid4())
@@ -39,7 +39,8 @@ collector = TestResultCollector()
 
 
 def pytest_sessionstart(session):
-    """Called when test session starts"""
+    """Called when test session starts.
+      When it runs: Right when you type pytest tests/"""
     collector.reset()
     print(f"\n📊 Test Dashboard: Recording test results (Run ID: {collector.run_id[:8]}...)")
 

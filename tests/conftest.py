@@ -4,6 +4,9 @@ import uuid
 import os
 import sys
 from datetime import datetime
+#How Pytest Discovers This Plugin
+#In your pytest.ini you register the plugin:
+
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
