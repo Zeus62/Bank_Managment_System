@@ -105,7 +105,7 @@ Bank_Managment_System/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Bank_Managment_System.git
+   git clone https://github.com/Zeus62/Bank_Managment_System.git
    cd Bank_Managment_System
    ```
 
@@ -260,13 +260,13 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👨‍💻 Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
+**Ahmed Esmat**
+- GitHub: [@Zeus62](https://github.com/Zeus62)
+- Email: ahmed.esmatx@example.com
 
 ## 📞 Support
 
-For support, email your.email@example.com or open an issue in the repository.
+For support, email ahmed.esmatx@gmail.com or open an issue in the repository.
 
 ## 🎓 Learning Resources
 
