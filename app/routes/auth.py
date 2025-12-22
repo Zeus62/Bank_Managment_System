@@ -61,21 +61,6 @@ def register():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """
-    Login Route
-    -----------
-    GET: Display login form
-    POST: Process login attempt
-    
-    Flow:
-    1. User visits /login
-    2. Sees login form
-    3. Enters credentials
-    4. Clicks submit
-    5. Server validates
-    6. If valid: redirect to dashboard
-    7. If invalid: show error
-    """
     # If user is already logged in, redirect to dashboard
     if current_user.is_authenticated:
         return redirect(url_for('dashboard.index'))

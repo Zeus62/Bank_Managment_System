@@ -62,16 +62,7 @@ def create_account():
 @accounts_bp.route('/<int:account_id>')
 @login_required
 def view_account(account_id):
-    """
-    View details of a specific account
 
-    URL: /accounts/123
-    Method: GET
-
-    The <int:account_id> is a URL variable:
-    - <int:...> means it must be an integer
-    - Flask automatically converts it and passes to function
-    """
     account = Account.query.get_or_404(account_id)
     
     # Check if user owns this account

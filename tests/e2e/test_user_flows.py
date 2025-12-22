@@ -13,53 +13,13 @@ from app.models.user import User
 from app.models.account import Account
 
 class TestConfig:
-    """
-    Special configuration for E2E tests
-     
-    WHY A SEPARATE CONFIG?
-    ─────────────────────
-    • TESTING = True: Flask knows this is a test
-    • Separate database: Don't mess with real data
-    • CSRF disabled: Forms work without tokens (easier testing)
-    """
     TESTING = True
-    # Tells Flask this is a test environment
-    # Changes some behaviors (e.g., error handling)
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test_e2e.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'test-secret-key'
     WTF_CSRF_ENABLED = False
-    # WHY?
-    # CSRF tokens change every request
-    # Selenium would need to find and include them
-    # Disabling makes testing easierf
-    # IMPORTANT: Only disable in tests!
 
 class TestUserFlowsE2E:
-    """End-to-End tests for complete user flows"""
-    
-    """
-    End-to-End tests for complete user flows
-    
-    WHAT IS A TEST CLASS?
-    ─────────────────────
-    Groups related tests together.
-    Shared fixtures (setup/teardown) apply to all tests in class.
-    
-    CLASS STRUCTURE:
-    ┌─────────────────────────────────────────────────────────────┐
-    │  TestUserFlowsE2E                                           │
-    │  ├── Fixtures (setup)                                       │
-    │  │   ├── app()        → Creates Flask application          │
-    │  │   ├── live_server() → Starts server on port 5001        │
-    │  │   └── driver()     → Creates Chrome browser             │
-    │  │                                                          │
-    │  └── Test Methods                                           │
-    │      ├── test_complete_login_flow()                        │
-    │      ├── test_login_with_invalid_credentials()             │
-    │      └── test_complete_registration_flow()                 │
-    └─────────────────────────────────────────────────────────────┘
-    """
     @pytest.fixture(scope='class')
     def app(self):
         """Create application for E2E testing"""
@@ -134,26 +94,10 @@ class TestUserFlowsE2E:
         # This affects what elements are visible/clickable
         chrome_options.add_argument('--window-size=1920,1080')
 
-        # HEADLESS MODE: Browser runs without visible window
-        # WHY HEADLESS?
-        # • Faster (no GUI rendering)
-        # • Works on servers without displays
-        # • CI/CD pipelines can run tests
-        # • Doesn't interrupt your work
-
         service = Service(ChromeDriverManager().install())
-        # ChromeDriverManager().install():
-        #   1. Detects your Chrome browser version
-        #   2. Downloads matching ChromeDriver
-        #   3. Caches it locally
-        #   4. Returns path to the executable
-        #
-        # Service: Wraps the ChromeDriver executable
+       
         
-        # ─────────────────────────────────────────────────────────────
-        # STEP 3: CREATE BROWSER INSTANCE
-        # ─────────────────────────────────────────────────────────────
-        
+        # STEP 3: CREATE BROWSER INSTANCE        
         driver = webdriver.Chrome(
             service=service,
             options=chrome_options
@@ -164,29 +108,20 @@ class TestUserFlowsE2E:
         driver.implicitly_wait(10)
         # IMPLICIT WAIT: If element not found, wait up to 10 seconds
         # Selenium will retry finding the element during this time
-        # Helps with pages that load dynamically
+
         
-        # ─────────────────────────────────────────────────────────────
-        # STEP 4: PROVIDE DRIVER TO TESTS
-        # ─────────────────────────────────────────────────────────────
-        
+      
+        # STEP 4: PROVIDE DRIVER TO TESTS        
         yield driver
-        # Tests run here, using the driver
-        
-        # ─────────────────────────────────────────────────────────────
-        # STEP 5: CLEANUP
-        # ─────────────────────────────────────────────────────────────
-        
+
+        # STEP 5: CLEANUP        
         driver.quit()
+
         # Close browser and stop ChromeDriver process
         # IMPORTANT: Always quit! Otherwise Chrome processes pile up
     
-    # ==================== LOGIN FLOW TESTS ====================
-    
-    # ═══════════════════════════════════════════════════════════════════
-#                      TEST METHODS
-# ═══════════════════════════════════════════════════════════════════
 
+    # ==================== LOGIN FLOW TESTS ====================
     @pytest.mark.e2e
     @pytest.mark.slow
     def test_complete_login_flow(self, driver, live_server):
@@ -253,6 +188,8 @@ class TestUserFlowsE2E:
         # We check if "Login" appears anywhere
         # This confirms we're on the right page
         
+
+
         # ─────────────────────────────────────────────────────────────
         # STEP 3: FIND INPUT ELEMENTS
         # ─────────────────────────────────────────────────────────────
@@ -265,42 +202,12 @@ class TestUserFlowsE2E:
         # HTML looks like:
         # <input type="text" id="username" name="username">
         # <input type="password" id="password" name="password">
-        
-        """
-        ELEMENT LOCATION STRATEGIES:
-        ────────────────────────────
-        
-        By.ID           → find_element(By.ID, 'username')
-                        <input id="username">
-                        
-        By.NAME         → find_element(By.NAME, 'email')
-                        <input name="email">
-                        
-        By.CLASS_NAME   → find_element(By.CLASS_NAME, 'btn-primary')
-                        <button class="btn-primary">
-                        
-        By.TAG_NAME     → find_element(By.TAG_NAME, 'h1')
-                        <h1>...</h1>
-                        
-        By.CSS_SELECTOR → find_element(By.CSS_SELECTOR, 'button[type="submit"]')
-                        <button type="submit">
-                        Most flexible, uses CSS selectors
-                        
-        By.XPATH        → find_element(By.XPATH, '//button[@type="submit"]')
-                        <button type="submit">
-                        Most powerful, uses XPath expressions
-                        
-        By.LINK_TEXT    → find_element(By.LINK_TEXT, 'Register')
-                        <a href="/register">Register</a>
-                        
-        By.PARTIAL_LINK_TEXT → find_element(By.PARTIAL_LINK_TEXT, 'Reg')
-                            <a href="/register">Register Here</a>
-        """
+    
+
         
         # ─────────────────────────────────────────────────────────────
         # STEP 4: ENTER TEXT INTO FIELDS
         # ─────────────────────────────────────────────────────────────
-        
         username_field.clear()
         # clear(): Remove any existing text in the field
         # Important if field has placeholder or default value
@@ -308,20 +215,6 @@ class TestUserFlowsE2E:
         username_field.send_keys('e2euser')
         # send_keys(): Type text into the field
         # Simulates keyboard input, character by character
-        
-        """
-        WHAT HAPPENS:
-        
-        Before send_keys:
-        ┌────────────────────┐
-        │ Username: [      ] │
-        └────────────────────┘
-        
-        After send_keys('e2euser'):
-        ┌────────────────────┐
-        │ Username: [e2euser]│
-        └────────────────────┘
-        """
         
         password_field.clear()
         password_field.send_keys('E2EPassword123')
@@ -336,11 +229,6 @@ class TestUserFlowsE2E:
         )
         # CSS SELECTOR: button[type="submit"]
         # Finds: <button type="submit">Login</button>
-        #
-        # CSS Selector is powerful:
-        # • 'button' - tag name
-        # • '[type="submit"]' - attribute selector
-        # • Combined: button with type="submit"
         
         submit_button.click()
         # click(): Simulate mouse click on the element
@@ -363,14 +251,7 @@ class TestUserFlowsE2E:
         
         time.sleep(2)
         # Wait 2 seconds for page to load
-        #
-        # NOTE: time.sleep is NOT ideal!
-        # Better approach: WebDriverWait (explicit wait)
-        #
-        # WebDriverWait(driver, 10).until(
-        #     EC.presence_of_element_located((By.ID, 'dashboard'))
-        # )
-        # This waits UP TO 10 seconds for dashboard element to appear
+        
         
         # ─────────────────────────────────────────────────────────────
         # STEP 7: VERIFY LOGIN SUCCESS
