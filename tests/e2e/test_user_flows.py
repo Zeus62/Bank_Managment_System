@@ -15,7 +15,7 @@ from app.models.account import Account
 class TestConfig:
     """
     Special configuration for E2E tests
-    
+     
     WHY A SEPARATE CONFIG?
     ─────────────────────
     • TESTING = True: Flask knows this is a test

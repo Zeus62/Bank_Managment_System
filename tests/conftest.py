@@ -5,13 +5,11 @@ import os
 import sys
 from datetime import datetime
 #How Pytest Discovers This Plugin
-#In your pytest.ini you register the plugin:
 
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
-
 from app import create_app, db
 from app.models.user import User
 from app.models.account import Account
@@ -144,7 +142,6 @@ def app():
     """Create application for testing"""
     application = create_app()
     application.config.from_object(TestConfig)
-    
     with application.app_context():
         db.create_all()
         yield application
