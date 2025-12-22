@@ -6,39 +6,38 @@
     <title>{% block title %}Test Automation Dashboard{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --primary-color: #6366f1;
-            --primary-light: #818cf8;
-            --primary-dark: #4f46e5;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --info-color: #3b82f6;
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --border-color: #475569;
-        }
-        
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            /* Professional Blue-Gray Palette */
+            --primary-color: #2563eb;
+            --primary-hover: #1e40af;
+            --primary-light: #dbeafe;
+            --success-color: #059669;
+            --success-hover: #047857;
+            --success-light: #d1fae5;
+            --warning-color: #d97706;
+            --warning-hover: #b45309;
+            --warning-light: #fef3c7;
+            --danger-color: #dc2626;
+            --danger-hover: #b91c1c;
+            --info-color: #0284c7;
+            --info-hover: #0369a1;
+            --dark-bg: #1e293b;
+            --dark-hover: #334155;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
         }
         
         html {
@@ -46,19 +45,20 @@
         }
         
         body {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1f35 100%);
+            background-color: var(--light-bg);
             color: var(--text-primary);
-            font-weight: 400;
-            letter-spacing: 0.3px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         
         /* Navbar Styling */
         .navbar {
-            background: linear-gradient(90deg, #0f1419 0%, #1a1f35 100%);
-            border-bottom: 1px solid var(--border-color);
+            background-color: var(--dark-bg) !important;
+            border-bottom: 1px solid var(--dark-hover);
             padding: 1rem 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -66,75 +66,61 @@
         
         .navbar-brand {
             font-weight: 700;
-            font-size: 1.3rem;
-            color: var(--text-primary) !important;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.5rem;
+            color: #fff !important;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary-color);
         }
         
         .nav-link {
-            color: var(--text-muted) !important;
+            color: rgba(255,255,255,0.85) !important;
             font-weight: 500;
-            position: relative;
-            transition: all 0.3s ease;
-            margin: 0 0.25rem;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-light), var(--primary-color));
-            transition: width 0.3s ease;
+            transition: all 0.2s ease;
+            margin: 0 0.5rem;
         }
         
         .nav-link:hover {
-            color: var(--text-primary) !important;
-        }
-        
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 6px;
         }
         
         .nav-link.active {
-            color: var(--text-primary) !important;
+            color: #fff !important;
+            background-color: var(--primary-color);
+            border-radius: 6px;
+        }
+        
+        .nav-link i {
+            margin-right: 5px;
+            opacity: 0.9;
         }
         
         .navbar-text {
-            color: var(--text-muted) !important;
+            color: rgba(255,255,255,0.7) !important;
             font-size: 0.9rem;
             font-weight: 500;
         }
         
         /* Card Styling */
         .card {
-            background: rgba(30, 41, 59, 0.7);
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            transition: box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
         
         .card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.1);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .card-header {
-            background: transparent;
+            background-color: var(--light-bg);
             border-bottom: 1px solid var(--border-color);
-            padding: 1.5rem;
+            padding: 1rem 1.25rem;
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -147,74 +133,39 @@
         .stat-card {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 20px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            transition: all 0.2s ease;
             cursor: pointer;
-            backdrop-filter: blur(20px);
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
-            transition: all 0.6s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
-            border-color: rgba(99, 102, 241, 0.6);
-        }
-        
-        .stat-card:hover::before {
-            top: -25%;
-            right: -25%;
         }
         
         .stat-card.success {
-            border-color: rgba(16, 185, 129, 0.3);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-        }
-        
-        .stat-card.success:hover {
-            box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.6);
+            background: linear-gradient(135deg, var(--success-color) 0%, var(--success-hover) 100%);
+            color: white;
+            border: none;
         }
         
         .stat-card.danger {
-            border-color: rgba(239, 68, 68, 0.3);
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
-        }
-        
-        .stat-card.danger:hover {
-            box-shadow: 0 20px 50px rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.6);
+            background: linear-gradient(135deg, var(--danger-color) 0%, var(--danger-hover) 100%);
+            color: white;
+            border: none;
         }
         
         .stat-card.warning {
-            border-color: rgba(245, 158, 11, 0.3);
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%);
-        }
-        
-        .stat-card.warning:hover {
-            box-shadow: 0 20px 50px rgba(245, 158, 11, 0.2);
-            border-color: rgba(245, 158, 11, 0.6);
+            background: linear-gradient(135deg, var(--warning-color) 0%, var(--warning-hover) 100%);
+            color: white;
+            border: none;
         }
         
         .stat-card.info {
-            border-color: rgba(59, 130, 246, 0.3);
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            background: linear-gradient(135deg, var(--info-color) 0%, var(--info-hover) 100%);
+            color: white;
+            border: none;
         }
         
-        .stat-card.info:hover {
-            box-shadow: 0 20px 50px rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.6);
+        .stat-card.primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            border: none;
         }
         
         .stat-card-content {
@@ -225,14 +176,10 @@
         .stat-value {
             font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         .stat-label {
-            color: var(--text-muted);
+            opacity: 0.9;
             font-size: 0.95rem;
             font-weight: 500;
             margin-top: 0.5rem;
@@ -246,47 +193,42 @@
         
         /* Status Badge */
         .status-badge {
-            padding: 6px 14px;
-            border-radius: 24px;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: all 0.3s ease;
         }
         
         .status-passed {
-            background: rgba(16, 185, 129, 0.15);
-            color: #10b981;
-            border: 1px solid rgba(16, 185, 129, 0.4);
+            background-color: var(--success-light);
+            color: #065f46;
+            border: 1px solid #86efac;
         }
         
         .status-failed {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border: 1px solid rgba(239, 68, 68, 0.4);
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
         }
         
         .status-skipped {
-            background: rgba(245, 158, 11, 0.15);
-            color: #f59e0b;
-            border: 1px solid rgba(245, 158, 11, 0.4);
-        }
-        
-        .status-badge:hover {
-            transform: scale(1.05);
+            background-color: var(--warning-light);
+            color: #92400e;
+            border: 1px solid #fcd34d;
         }
         
         /* Progress Bar */
         .progress {
-            background: rgba(71, 85, 105, 0.3);
-            border-radius: 12px;
+            background-color: var(--border-color);
+            border-radius: 8px;
             height: 12px;
             overflow: hidden;
         }
         
         .progress-bar {
-            border-radius: 12px;
+            border-radius: 8px;
             transition: all 0.4s ease;
             font-size: 0.75rem;
             font-weight: 600;
@@ -298,6 +240,87 @@
         /* Table Styling */
         .table {
             color: var(--text-primary);
+            background-color: var(--card-bg);
+        }
+        
+        .table thead th {
+            background-color: var(--light-bg);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+        }
+        
+        .table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s ease;
+        }
+        
+        .table tbody tr:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        
+        /* Badge Colors */
+        .badge {
+            padding: 0.4rem 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+        
+        .bg-success {
+            background-color: var(--success-color) !important;
+        }
+        
+        .bg-danger {
+            background-color: var(--danger-color) !important;
+        }
+        
+        .bg-warning {
+            background-color: var(--warning-color) !important;
+        }
+        
+        .bg-info {
+            background-color: var(--info-color) !important;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .text-success {
+            color: var(--success-color) !important;
+        }
+        
+        .text-danger {
+            color: var(--danger-color) !important;
+        }
+        
+        .text-warning {
+            color: var(--warning-color) !important;
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Code Block */
+        pre {
+            background-color: var(--dark-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            color: #fca5a5;
+            white-space: pre-wrap;
+            word-break: break-word;
+            border-left: 3px solid var(--danger-color);
+        }
             margin-bottom: 0;
         }
         
@@ -433,69 +456,80 @@
         }
         
         /* Footer */
+        main {
+            flex: 1;
+        }
+        
         footer {
-            background: linear-gradient(90deg, #0f1419 0%, #1a1f35 100%);
-            border-top: 1px solid var(--border-color);
-            padding: 2rem 0;
-            margin-top: 4rem;
+            margin-top: auto;
+            background-color: var(--dark-bg);
+            border-top: 1px solid var(--dark-hover);
+            padding: 1.5rem 0;
             text-align: center;
-            color: var(--text-muted);
+            color: rgba(255,255,255,0.8);
         }
         
         /* Button Styling */
         .btn {
-            font-weight: 600;
-            border-radius: 10px;
-            padding: 0.6rem 1.2rem;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: none;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-            border: none;
+            background-color: var(--primary-color);
             color: white;
         }
         
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.25);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
             color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: var(--success-hover);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.25);
         }
         
         .btn-outline-primary {
+            border: 2px solid var(--primary-color);
             color: var(--primary-color);
-            border: 1px solid var(--primary-color);
+            background-color: transparent;
         }
         
         .btn-outline-primary:hover {
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            background-color: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
         }
         
         .btn-outline-secondary {
+            border: 2px solid var(--border-color);
             color: var(--text-secondary);
-            border: 1px solid var(--border-color);
+            background-color: transparent;
         }
         
         .btn-outline-secondary:hover {
-            background: var(--bg-secondary);
+            background-color: var(--light-bg);
+            border-color: var(--text-secondary);
             color: var(--text-primary);
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .stat-value {
-                font-size: 2rem;
-            }
-            
-            .page-header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .table {
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -504,7 +538,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid px-4">
             <a class="navbar-brand" href="{{ url_for('dashboard') }}">
-                <i class="bi bi-cpu"></i> Test Automation Dashboard
+                <i class="bi bi-cpu-fill"></i> Test Automation Dashboard
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -516,19 +550,19 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" 
                            href="{{ url_for('dashboard') }}">
-                            <i class="bi bi-house-door"></i> Dashboard
+                            <i class="bi bi-house-door-fill"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'test_runs' %}active{% endif %}" 
                            href="{{ url_for('test_runs') }}">
-                            <i class="bi bi-play-circle"></i> Test Runs
+                            <i class="bi bi-play-circle-fill"></i> Test Runs
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'failures' %}active{% endif %}" 
                            href="{{ url_for('failures') }}">
-                            <i class="bi bi-exclamation-triangle"></i> Failures
+                            <i class="bi bi-exclamation-triangle-fill"></i> Failures
                         </a>
                     </li>
                     <li class="nav-item">
@@ -538,11 +572,6 @@
                         </a>
                     </li>
                 </ul>
-                
-                <span class="navbar-text ms-auto">
-                    <i class="bi bi-clock"></i> 
-                    <span id="current-time" style="margin-left: 0.5rem;"></span>
-                </span>
             </div>
         </div>
     </nav>
@@ -554,32 +583,15 @@
     
     <!-- Footer -->
     <footer>
-        <small>Test Automation Dashboard | Bank Management System | © 2024</small>
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-shield-check"></i> Test Automation Dashboard | Bank Management System | © 2025
+            </p>
+        </div>
     </footer>
     
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <script>
-        // Update time in navbar
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('current-time').textContent = now.toLocaleTimeString();
-        }
-        updateTime();
-        setInterval(updateTime, 1000);
-        
-        // Smooth scroll behavior
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     {% block scripts %}{% endblock %}
 </body>

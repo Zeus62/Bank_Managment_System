@@ -4,52 +4,59 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-wallet2"></i> My Accounts</h2>
+    <div>
+        <h2 class="fw-bold mb-1"><i class="bi bi-wallet-fill text-primary"></i> My Accounts</h2>
+        <p class="text-muted mb-0">Manage and monitor all your bank accounts</p>
+    </div>
     <div>
         <a href="{{ url_for('accounts.search') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-search"></i> Search
         </a>
         <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> New Account
+            <i class="bi bi-plus-circle-fill"></i> New Account
         </a>
     </div>
 </div>
 
 {% if accounts %}
-    <div class="row">
+    <div class="row g-4">
         {% for account in accounts %}
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 {% if account.status == 'closed' %}bg-light{% endif %}">
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 {% if account.status == 'closed' %}opacity-75{% endif %}">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <span class="badge bg-{{ 'primary' if account.account_type == 'savings' else 'success' }}">
+                    <span class="badge bg-{{ 'primary' if account.account_type == 'savings' else 'success' }} fs-6">
+                        <i class="bi bi-{{ 'piggy-bank-fill' if account.account_type == 'savings' else 'credit-card-fill' }}"></i>
                         {{ account.account_type | capitalize }}
                     </span>
-                    <span class="badge bg-{{ 'success' if account.status == 'active' else 'secondary' }}">
+                    <span class="badge bg-{{ 'success' if account.status == 'active' else 'secondary' }} fs-6">
+                        <i class="bi bi-{{ 'check-circle-fill' if account.status == 'active' else 'x-circle-fill' }}"></i>
                         {{ account.status | capitalize }}
                     </span>
                 </div>
                 <div class="card-body">
-                    <h6 class="card-subtitle mb-2 text-muted">Account Number</h6>
-                    <p class="card-text">{{ account.account_number }}</p>
+                    <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Account Number</h6>
+                    <p class="card-text fw-bold fs-5 mb-3">{{ account.account_number }}</p>
                     
-                    <h6 class="card-subtitle mb-2 text-muted">Balance</h6>
-                    <h4 class="text-primary">${{ "%.2f"|format(account.balance) }}</h4>
+                    <h6 class="text-muted mb-2 text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Current Balance</h6>
+                    <h3 class="text-primary fw-bold mb-3">${{ "%.2f"|format(account.balance) }}</h3>
                     
                     <small class="text-muted">
-                        Opened: {{ account.created_at.strftime('%b %d, %Y') }}
+                        <i class="bi bi-calendar-check"></i> Opened: {{ account.created_at.strftime('%b %d, %Y') }}
                     </small>
                 </div>
-                <div class="card-footer bg-transparent">
-                    <a href="{{ url_for('accounts.view_account', account_id=account.id) }}" 
-                       class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-eye"></i> View Details
-                    </a>
-                    {% if account.status == 'active' %}
-                    <a href="{{ url_for('transactions.deposit') }}?account={{ account.id }}" 
-                       class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-plus"></i> Deposit
-                    </a>
-                    {% endif %}
+                <div class="card-footer bg-transparent border-top">
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('accounts.view_account', account_id=account.id) }}" 
+                           class="btn btn-outline-primary btn-sm flex-grow-1">
+                            <i class="bi bi-eye-fill"></i> View
+                        </a>
+                        {% if account.status == 'active' %}
+                        <a href="{{ url_for('transactions.deposit') }}?account={{ account.id }}" 
+                           class="btn btn-success btn-sm flex-grow-1">
+                            <i class="bi bi-plus-circle"></i> Deposit
+                        </a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,11 +65,13 @@
 {% else %}
     <div class="card">
         <div class="card-body text-center py-5">
-            <i class="bi bi-wallet" style="font-size: 4rem; color: #ccc;"></i>
-            <h4 class="mt-3">No Accounts Yet</h4>
-            <p class="text-muted">Create your first bank account to get started.</p>
+            <div class="mb-4">
+                <i class="bi bi-wallet" style="font-size: 5rem; color: #d1d5db;"></i>
+            </div>
+            <h4 class="fw-bold mb-3">No Accounts Yet</h4>
+            <p class="text-muted mb-4">Create your first bank account to get started with our services.</p>
             <a href="{{ url_for('accounts.create_account') }}" class="btn btn-primary btn-lg">
-                <i class="bi bi-plus-circle"></i> Create Account
+                <i class="bi bi-plus-circle-fill"></i> Create Your First Account
             </a>
         </div>
     </div>

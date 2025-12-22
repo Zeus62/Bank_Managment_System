@@ -18,28 +18,28 @@
             <div class="failure-item">
                 <div class="d-flex justify-content-between align-items-start">
                     <div style="flex: 1;">
-                        <h6 style="margin: 0 0 0.5rem 0; font-weight: 600; color: #f1f5f9;">{{ failure.test_name }}</h6>
+                        <h6 style="margin: 0 0 0.5rem 0; font-weight: 600; color: #0f172a;">{{ failure.test_name }}</h6>
                         <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                            <small class="text-muted">
+                            <small style="color: #64748b;">
                                 <i class="bi bi-file-earmark"></i> {{ failure.test_file }}
                             </small>
-                            <small style="color: var(--text-muted); padding: 2px 8px; background: rgba(99, 102, 241, 0.1); border-radius: 4px;">
+                            <small style="color: #3730a3; padding: 4px 10px; background: rgba(99, 102, 241, 0.15); border-radius: 4px; font-weight: 500;">
                                 {{ "%.3f"|format(failure.duration) }}s
                             </small>
                         </div>
                     </div>
                     <div class="text-end">
-                        <small class="text-muted" style="display: block; margin-bottom: 0.5rem;">
+                        <small style="color: #64748b; display: block; margin-bottom: 0.5rem;">
                             {{ failure.timestamp.strftime('%Y-%m-%d') }}
                         </small>
-                        <small style="color: var(--text-secondary); font-weight: 500;">
+                        <small style="color: #475569; font-weight: 600;">
                             {{ failure.timestamp.strftime('%H:%M:%S') }}
                         </small>
                     </div>
                 </div>
                 {% if failure.error_message %}
                 <div class="error-message mt-3" style="max-height: 200px; overflow-y: auto;">
-                    <strong style="color: #fca5a5; display: block; margin-bottom: 0.5rem;">Error Details:</strong>
+                    <strong style="color: #dc2626; display: block; margin-bottom: 0.5rem;">Error Details:</strong>
                     {{ failure.error_message }}
                 </div>
                 {% endif %}

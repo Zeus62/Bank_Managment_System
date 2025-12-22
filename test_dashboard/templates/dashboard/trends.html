@@ -15,8 +15,8 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 style="margin: 0;"><i class="bi bi-percent"></i> Pass Rate Trend</h5>
-                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Success rate over time</small>
+                <h5 style="margin: 0; color: #0f172a;"><i class="bi bi-percent"></i> Pass Rate Trend</h5>
+                <small style="color: #64748b; margin-top: 0.25rem; display: block;">Success rate over time</small>
             </div>
             <div class="card-body">
                 <canvas id="passRateChart" height="100"></canvas>
@@ -27,8 +27,8 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 style="margin: 0;"><i class="bi bi-bar-chart"></i> Test Results Trend</h5>
-                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Passed vs Failed tests</small>
+                <h5 style="margin: 0; color: #0f172a;"><i class="bi bi-bar-chart"></i> Test Results Trend</h5>
+                <small style="color: #64748b; margin-top: 0.25rem; display: block;">Passed vs Failed tests</small>
             </div>
             <div class="card-body">
                 <canvas id="resultsChart" height="100"></canvas>
@@ -41,8 +41,8 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 style="margin: 0;"><i class="bi bi-file-code"></i> Code Coverage Trend</h5>
-                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Coverage percentage over time</small>
+                <h5 style="margin: 0; color: #0f172a;"><i class="bi bi-file-code"></i> Code Coverage Trend</h5>
+                <small style="color: #64748b; margin-top: 0.25rem; display: block;">Coverage percentage over time</small>
             </div>
             <div class="card-body">
                 <canvas id="coverageChart" height="100"></canvas>
@@ -53,8 +53,8 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h5 style="margin: 0;"><i class="bi bi-hourglass-split"></i> Execution Duration Trend</h5>
-                <small style="color: var(--text-muted); margin-top: 0.25rem; display: block;">Test execution time</small>
+                <h5 style="margin: 0; color: #0f172a;"><i class="bi bi-hourglass-split"></i> Execution Duration Trend</h5>
+                <small style="color: #64748b; margin-top: 0.25rem; display: block;">Test execution time</small>
             </div>
             <div class="card-body">
                 <canvas id="durationChart" height="100"></canvas>
@@ -95,9 +95,9 @@
         danger: '#ef4444',
         warning: '#f59e0b',
         info: '#3b82f6',
-        text: '#e2e8f0',
-        textMuted: '#94a3b8',
-        grid: '#334155'
+        text: '#0f172a',
+        textMuted: '#475569',
+        grid: '#e2e8f0'
     };
     
     var commonChartOptions = {
@@ -114,7 +114,7 @@
                     padding: 20,
                     font: {
                         size: 13,
-                        weight: 500
+                        weight: '600'
                     }
                 } 
             }

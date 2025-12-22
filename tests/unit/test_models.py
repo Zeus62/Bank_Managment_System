@@ -58,6 +58,12 @@ class TestUserModel:
         with app.app_context():
             user = User(username='test', email='test@test.com')
             assert user.is_active == True
+    
+    
+    @pytest.mark.unit
+    def test_user_creation(self):
+        user = User(username='testuser', email='test@test.com')
+        assert user.username == 'wrongname'  # This will fail
 
 
 class TestAccountModel:

@@ -32,30 +32,30 @@
                     {% for run in runs.items %}
                     <tr>
                         <td>
-                            <div style="font-weight: 500; color: #f1f5f9;">{{ run.start_time.strftime('%Y-%m-%d') }}</div>
-                            <small style="color: var(--text-muted);">{{ run.start_time.strftime('%H:%M:%S') }}</small>
+                            <div style="font-weight: 600; color: #0f172a;">{{ run.start_time.strftime('%Y-%m-%d') }}</div>
+                            <small style="color: #64748b;">{{ run.start_time.strftime('%H:%M:%S') }}</small>
                         </td>
                         <td>
-                            <span style="font-weight: 600; font-size: 1.1rem; color: #f1f5f9;">{{ run.total_tests }}</span>
+                            <span style="font-weight: 700; font-size: 1.15rem; color: #0f172a;">{{ run.total_tests }}</span>
                         </td>
                         <td>
-                            <span style="color: #10b981; font-weight: 600;">{{ run.passed }}</span>
+                            <span style="color: #059669; font-weight: 700; font-size: 1.05rem;">{{ run.passed }}</span>
                         </td>
                         <td>
-                            <span style="color: #ef4444; font-weight: 600;">{{ run.failed }}</span>
+                            <span style="color: #dc2626; font-weight: 700; font-size: 1.05rem;">{{ run.failed }}</span>
                         </td>
                         <td>
-                            <div class="progress" style="width: 100%; height: 22px; background: rgba(71, 85, 105, 0.3);">
-                                <div class="progress-bar pass-rate-bar" data-rate="{{ run.pass_rate }}" style="width: '{{ run.pass_rate }}%'; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 600; color: #f1f5f9;">
+                            <div class="progress" style="width: 100%; height: 24px; background: #e2e8f0;">
+                                <div class="progress-bar pass-rate-bar" data-rate="{{ run.pass_rate }}" style="width: {{ run.pass_rate }}%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: white; background: linear-gradient(90deg, #059669, #047857);">
                                     {{ run.pass_rate }}%
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <div style="font-weight: 500; color: #f1f5f9;">{{ "%.1f"|format(run.coverage) }}%</div>
+                            <div style="font-weight: 600; color: #0f172a;">{{ "%.1f"|format(run.coverage) }}%</div>
                         </td>
                         <td>
-                            <span style="color: var(--text-secondary);">{{ "%.2f"|format(run.duration) }}s</span>
+                            <span style="color: #475569; font-weight: 500;">{{ "%.2f"|format(run.duration) }}s</span>
                         </td>
                         <td>
                             <span class="status-badge status-{{ 'passed' if run.failed == 0 else 'failed' }}">

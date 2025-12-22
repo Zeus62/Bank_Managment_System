@@ -52,8 +52,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('auth.login'))
+        # Automatically log in the user after registration
+        login_user(user)
+        flash('Registration successful! Welcome to Bank Management System.', 'success')
+        return redirect(url_for('dashboard.index'))
     
     return render_template('auth/register.html')
 

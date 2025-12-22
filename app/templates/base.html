@@ -6,81 +6,356 @@
     <title>{% block title %}Bank Management System{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
     <style>
+        :root {
+            /* Professional Blue-Gray Palette */
+            --primary-color: #2563eb;
+            --primary-hover: #1e40af;
+            --primary-light: #dbeafe;
+            --success-color: #059669;
+            --success-hover: #047857;
+            --success-light: #d1fae5;
+            --warning-color: #d97706;
+            --warning-hover: #b45309;
+            --warning-light: #fef3c7;
+            --danger-color: #dc2626;
+            --danger-hover: #b91c1c;
+            --info-color: #0284c7;
+            --info-hover: #0369a1;
+            --dark-bg: #1e293b;
+            --dark-hover: #334155;
+            --light-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+        }
+        
         html, body {
             height: 100%;
         }
+        
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            background-color: #f8f9fa;
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .card {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border: none;
-            border-radius: 10px;
-        }
-        .btn-primary {
-            background-color: #0d6efd;
-            border: none;
-        }
-        .btn-primary:hover {
-            background-color: #0b5ed7;
-        }
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background-color: #343a40;
-        }
-        .sidebar a {
-            color: #fff;
-            padding: 15px 20px;
-            display: block;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            background-color: #495057;
-        }
-        .sidebar a.active {
-            background-color: #0d6efd;
-        }
-        .content {
-            padding: 20px;
-        }
-        .balance-card {
-            background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
-            color: white;
-        }
-        .transaction-positive {
-            color: #198754;
-        }
-        .transaction-negative {
-            color: #dc3545;
+            background-color: var(--light-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
         }
         
-        /* Fix footer to bottom */
+        /* Navigation Improvements */
+        .navbar {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            background-color: var(--dark-bg) !important;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff !important;
+        }
+        
+        .navbar-brand i {
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: rgba(255,255,255,0.85) !important;
+        }
+        
+        .nav-link:hover {
+            color: #fff !important;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 6px;
+        }
+        
+        .nav-link i {
+            margin-right: 5px;
+            opacity: 0.9;
+        }
+        
+        /* Card Improvements */
+        .card {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: box-shadow 0.2s;
+            background-color: var(--card-bg);
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            background-color: var(--light-bg);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+        }
+        
+        /* Button Improvements - Unified Style */
+        .btn {
+            font-weight: 500;
+            padding: 0.5rem 1.25rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.25);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: var(--success-hover);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.25);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: #fff;
+        }
+        
+        .btn-warning:hover {
+            background-color: var(--warning-hover);
+            box-shadow: 0 4px 8px rgba(217, 119, 6, 0.25);
+            color: #fff;
+        }
+        
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: var(--info-hover);
+            box-shadow: 0 4px 8px rgba(6, 182, 212, 0.25);
+        }
+        
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background-color: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-secondary {
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            background-color: transparent;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--light-bg);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
+        }
+        
+        /* Balance Card - Softer Gradient */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            color: white;
+            border: none;
+        }
+        
+        .balance-card .card-subtitle {
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        /* Transaction Colors */
+        .transaction-positive {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .transaction-negative {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+        
+        /* Alert Improvements - Softer Colors */
+        .alert {
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background-color: var(--success-light);
+            color: #065f46;
+            border: 1px solid #86efac;
+        }
+        
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        .alert-warning {
+            background-color: var(--warning-light);
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+        
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+        
+        /* Table Improvements */
+        .table {
+            background-color: var(--card-bg);
+        }
+        
+        .table thead th {
+            background-color: var(--light-bg);
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: var(--light-bg);
+        }
+        
+        /* Badge Improvements - Consistent with Color Scheme */
+        .badge {
+            padding: 0.4rem 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .bg-success {
+            background-color: var(--success-color) !important;
+        }
+        
+        .bg-warning {
+            background-color: var(--warning-color) !important;
+        }
+        
+        .bg-info {
+            background-color: var(--info-color) !important;
+        }
+        
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        
+        .text-success {
+            color: var(--success-color) !important;
+        }
+        
+        .text-warning {
+            color: var(--warning-color) !important;
+        }
+        
+        .text-info {
+            color: var(--info-color) !important;
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        /* Footer */
         main {
             flex: 1;
         }
+        
         footer {
             margin-top: auto;
+            background-color: var(--dark-bg);
+            color: rgba(255,255,255,0.8);
+            padding: 1.5rem 0;
+        }
+        
+        /* Dropdown Menu */
+        .dropdown-menu {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown-item {
+            padding: 0.6rem 1.25rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--light-bg);
+        }
+        
+        /* Form Improvements */
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.15);
+        }
+        
+        .input-group-text {
+            background-color: var(--light-bg);
+            border: 2px solid var(--border-color);
+            font-weight: 500;
+            color: var(--text-secondary);
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-4">
             <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
-                <i class="bi bi-bank"></i> BankMS
+                <i class="bi bi-bank2"></i> BankMS
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -91,31 +366,39 @@
                 {% if current_user.is_authenticated %}
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('dashboard.index') }}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
+                        <a class="nav-link px-3" href="{{ url_for('dashboard.index') }}">
+                            <i class="bi bi-house-door-fill"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('accounts.list_accounts') }}">
-                            <i class="bi bi-wallet2"></i> Accounts
+                        <a class="nav-link px-3" href="{{ url_for('accounts.list_accounts') }}">
+                            <i class="bi bi-wallet-fill"></i> Accounts
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                            <i class="bi bi-cash-stack"></i> Transactions
+                        <a class="nav-link dropdown-toggle px-3" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-arrow-left-right"></i> Transactions
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.deposit') }}">Deposit</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.withdraw') }}">Withdraw</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.transfer') }}">Transfer</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions.deposit') }}">
+                                <i class="bi bi-plus-circle-fill text-success"></i> Deposit
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions.withdraw') }}">
+                                <i class="bi bi-dash-circle-fill text-warning"></i> Withdraw
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions.transfer') }}">
+                                <i class="bi bi-arrow-left-right text-info"></i> Transfer
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions.history') }}">History</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions.history') }}">
+                                <i class="bi bi-clock-history"></i> History
+                            </a></li>
                         </ul>
                     </li>
                     {% if current_user.role == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link text-warning" href="{{ url_for('admin.dashboard') }}">
-                            <i class="bi bi-shield-lock"></i> Admin
+                        <a class="nav-link px-3 text-warning" href="{{ url_for('admin.dashboard') }}">
+                            <i class="bi bi-shield-fill-check"></i> Admin
                         </a>
                     </li>
                     {% endif %}
@@ -123,12 +406,12 @@
                 
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle px-3" href="#" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle"></i> {{ current_user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">
-                                <i class="bi bi-gear"></i> Profile
+                                <i class="bi bi-person-fill"></i> Profile
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
@@ -140,10 +423,14 @@
                 {% else %}
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link px-3" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                        <a class="nav-link px-3" href="{{ url_for('auth.register') }}">
+                            <i class="bi bi-person-plus-fill"></i> Register
+                        </a>
                     </li>
                 </ul>
                 {% endif %}
@@ -157,6 +444,15 @@
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {% if category == 'success' %}
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                        {% elif category == 'danger' %}
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {% elif category == 'warning' %}
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                        {% endif %}
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
@@ -166,16 +462,20 @@
     </div>
     
     <!-- Main Content -->
-    <main class="container mt-4">
+    <main class="container mt-4 mb-5">
         {% block content %}{% endblock %}
     </main>
     
     <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <p class="mb-0">&copy; 2025 Bank Management System. All rights reserved.</p>
+    <footer class="text-center py-4">
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-shield-check"></i> &copy; 2025 Bank Management System. All rights reserved.
+            </p>
+        </div>
     </footer>
     
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
