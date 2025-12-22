@@ -60,11 +60,6 @@ class TestUserModel:
             assert user.is_active == True
     
     
-    @pytest.mark.unit
-    def test_user_creation(self):
-        user = User(username='testuser', email='test@test.com')
-        assert user.username == 'wrongname'  # This will fail
-
 
 class TestAccountModel:
     """Unit tests for Account model"""

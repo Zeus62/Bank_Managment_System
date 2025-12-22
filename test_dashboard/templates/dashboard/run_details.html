@@ -82,16 +82,22 @@
                 {% set fail_pct = (run.failed / run.total_tests * 100) if run.total_tests > 0 else 0 %}
                 {% set skip_pct = (run.skipped / run.total_tests * 100) if run.total_tests > 0 else 0 %}
                 
-                <div class="progress mt-4" style="height: 28px;">
-                    <div class="progress-bar" style="width: '{{ pass_pct }}%';padding-left: 40px; padding-right: 40px; background: linear-gradient(90deg, #10b981, #059669); font-weight: 600; font-size: 0.8rem;">
-                        {{ run.passed }} Passed
+                <div class="progress mt-4" style="height: 32px; border-radius: 8px; overflow: hidden;">
+                    {% if run.passed > 0 %}
+                    <div class="progress-bar" style="width: {{ pass_pct }}%; background: linear-gradient(90deg, #10b981, #059669); font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; padding: 0 16px; color: white; min-width: 120px;">
+                        {{ run.passed }} Passed ({{ "%.1f"|format(pass_pct) }}%)
                     </div>
-                    <div class="progress-bar" style="width: '{{ fail_pct }}%'; padding-left: 40px; padding-right: 40px;background: linear-gradient(90deg, #ef4444, #dc2626); font-weight: 600; font-size: 0.8rem;">
-                        {{ run.failed }} Failed
+                    {% endif %}
+                    {% if run.failed > 0 %}
+                    <div class="progress-bar" style="width: {{ fail_pct }}%; background: linear-gradient(90deg, #ef4444, #dc2626); font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; padding: 0 16px; color: white; min-width: 120px;">
+                        {{ run.failed }} Failed ({{ "%.1f"|format(fail_pct) }}%)
                     </div>
-                    <div class="progress-bar" style="width: '{{ skip_pct }}%';padding-left: 40px; padding-right: 40px; background: linear-gradient(90deg, #f59e0b, #d97706); font-weight: 600; font-size: 0.8rem;">
-                        {{ run.skipped }} Skipped
+                    {% endif %}
+                    {% if run.skipped > 0 %}
+                    <div class="progress-bar" style="width: {{ skip_pct }}%; background: linear-gradient(90deg, #f59e0b, #d97706); font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; padding: 0 16px; color: white; min-width: 120px;">
+                        {{ run.skipped }} Skipped ({{ "%.1f"|format(skip_pct) }}%)
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -119,7 +125,7 @@
                         </small>
                     </div>
                     {% if test.error_message %}
-                    <div class="error-message mt-3" style="max-height: 250px; overflow-y: auto;">
+                    <div class="error-message mt-3" style="max-height: 250px;background: black; overflow-y: auto;">
                         <strong style="color: #dc2626; display: block; margin-bottom: 0.5rem;">Error:</strong>
                         {{ test.error_message }}
                     </div>
