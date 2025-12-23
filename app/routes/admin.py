@@ -118,9 +118,6 @@ def toggle_account_status(account_id):
     elif account.status == 'frozen':
         account.status = 'active'
         flash(f'Account {account.account_number} has been unfrozen.', 'success')
-    else:
-        flash('Cannot change status of closed account.', 'danger')
-        return redirect(url_for('admin.list_accounts'))
     
     db.session.commit()
     return redirect(url_for('admin.list_accounts'))

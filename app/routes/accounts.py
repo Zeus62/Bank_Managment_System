@@ -93,7 +93,7 @@ def close_account(account_id):
         flash('Please withdraw all funds before closing the account.', 'warning')
         return redirect(url_for('accounts.view_account', account_id=account_id))
     
-    account.status = 'closed'
+    db.session.delete(account)
     db.session.commit()
     
     flash('Account closed successfully.', 'success')

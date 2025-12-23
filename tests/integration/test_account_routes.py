@@ -160,6 +160,11 @@ class TestAccountRoutes:
         
         assert response.status_code == 200
         assert b'closed successfully' in response.data
+        
+        # Verify account is deleted from database
+        with app.app_context():
+            deleted_account = Account.query.get(account_id)
+            assert deleted_account is None
     
     @pytest.mark.integration
     def test_close_account_with_balance_fails(self, authenticated_client, test_account):
